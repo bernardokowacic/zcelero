@@ -6,7 +6,16 @@ import (
 	"zcelero/repository"
 	"zcelero/routes"
 	"zcelero/service"
+
+	"github.com/joho/godotenv"
 )
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+}
 
 func main() {
 	dbConn, err := database.CreatePGConn()
