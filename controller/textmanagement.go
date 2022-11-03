@@ -1,4 +1,4 @@
-package controllers
+package controller
 
 import (
 	"net/http"
@@ -7,7 +7,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetUser(textManagementService service.TextManagementService) gin.HandlerFunc {
+func Get(textManagementService service.TextManagementServiceInteface) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "pong"})
+	}
+}
+
+func Insert(textManagementService service.TextManagementServiceInteface) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "pong"})
 	}
