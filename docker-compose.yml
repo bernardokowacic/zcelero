@@ -1,0 +1,28 @@
+version: "2"
+services:
+  app:
+    build: .
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - database
+    networks:
+      - default
+  database:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 123456
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - default
+
+volumes:
+  postgres:
+
+networks:
+  default:
