@@ -11,10 +11,3 @@ func GetRoutes(router *gin.Engine, textManagementService service.TextManagementS
 	router.POST("/v1/text-management", controller.Insert(textManagementService))
 	router.GET("/v1/text-management", controller.Get(textManagementService))
 }
-
-func StartAPI(textManagementService service.TextManagementServiceInteface) *gin.Engine {
-	router := gin.Default()
-
-	GetRoutes(router, textManagementService)
-	return router
-}
