@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 	"zcelero/entity"
 	"zcelero/service"
@@ -32,9 +31,7 @@ func Get(textManagementService service.TextManagementServiceInteface) gin.Handle
 			return
 		}
 
-		fmt.Println(response)
-
-		c.JSON(http.StatusOK, gin.H{"message": "pong"})
+		c.JSON(http.StatusOK, gin.H{"text": response})
 	}
 }
 
