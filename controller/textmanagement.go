@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 	"zcelero/database/entity"
 	"zcelero/service"
@@ -10,6 +11,29 @@ import (
 
 func Get(textManagementService service.TextManagementServiceInteface) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		textId, exists := c.GetQuery("text_id")
+		if !exists {
+			c.JSON(http.StatusNotAcceptable, gin.H{"message": "text_id param is required"})
+			return
+		}
+
+		json := struct {
+			PrivateKey         string `json:"private_key"`
+			PrivateKeyPassword string `json:"private_key_password"`
+		}{}
+		if err := c.ShouldBindJSON(&json); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		response, err := textManagementService.Get(textId, json.PrivateKey, json.PrivateKeyPassword)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		fmt.Println(response)
+
 		c.JSON(http.StatusOK, gin.H{"message": "pong"})
 	}
 }
