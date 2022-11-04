@@ -3,7 +3,7 @@ package controller
 import (
 	"fmt"
 	"net/http"
-	"zcelero/database/entity"
+	"zcelero/entity"
 	"zcelero/service"
 
 	"github.com/gin-gonic/gin"

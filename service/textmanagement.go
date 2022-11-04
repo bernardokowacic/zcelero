@@ -10,7 +10,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
-	"zcelero/database/entity"
+	"zcelero/entity"
 	"zcelero/repository"
 
 	"github.com/google/uuid"
