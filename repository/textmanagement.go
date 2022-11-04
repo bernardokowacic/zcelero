@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
+
+	"github.com/rs/zerolog/log"
 )
 
 type TextManagementInterface interface {
@@ -21,13 +23,19 @@ func NewRepository() TextManagementInterface {
 
 // Save saves the file into folder
 func (t *textManagementRepositoryStruct) Save(fileName string, content string) error {
+	log.Debug().Msg("Creating file")
+
 	file, err := os.Create(fmt.Sprintf("storage/%s.txt", fileName))
 	if err != nil {
+		log.Error().Msg(err.Error())
 		return err
 	}
 
+	log.Debug().Msg("Writing data inside file")
+
 	_, err = file.WriteString(content)
 	if err != nil {
+		log.Error().Msg(err.Error())
 		return err
 	}
 
@@ -36,8 +44,10 @@ func (t *textManagementRepositoryStruct) Save(fileName string, content string) e
 
 // Load reads the file into memory
 func (t *textManagementRepositoryStruct) Load(fileName string) ([]byte, error) {
+	log.Debug().Msg("Reading file")
 	data, err := os.ReadFile(fmt.Sprintf("storage/%s.txt", fileName))
 	if err != nil {
+		log.Error().Msg(err.Error())
 		return nil, err
 	}
 
