@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"strings"
@@ -28,38 +29,46 @@ func NewService(textManagementRepository repository.TextManagementInterface) Tex
 	return &TextManagementService{TextManagementRepository: textManagementRepository}
 }
 
+// Get load the file content and decrypt it if necessary
 func (t *TextManagementService) Get(textId, privateKeyString, password string) (string, error) {
-	pk := strings.NewReader(privateKeyString)
-	pemBytes, err := ioutil.ReadAll(pk)
-	if err != nil {
-		return "", err
+	encrypted := false
+	fileName := textId
+	if !t.TextManagementRepository.CheckFileExists(textId) {
+		fileName = "encrypted_" + textId
+		encrypted = true
 	}
-	block, _ := pem.Decode(pemBytes)
-	bytePK, err := x509.DecryptPEMBlock(block, []byte(password))
+
+	data, err := t.TextManagementRepository.Load(fileName)
 	if err != nil {
 		return "", err
 	}
 
-	privateKey, err := x509.ParsePKCS1PrivateKey(bytePK)
-	if err != nil {
-		return "", err
+	message := string(data)
+	if encrypted {
+		if privateKeyString == "" {
+			return "", errors.New("private key is required to read this file")
+		}
+		if password == "" {
+			return "", errors.New("password is required to read this file")
+		}
+
+		message, err = decryptMessage(privateKeyString, password, data)
+		if err != nil {
+			return "", err
+		}
 	}
 
-	data, err := t.TextManagementRepository.Load(textId)
-	if err != nil {
-		return "", err
-	}
-
-	decriptedData, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, privateKey, data, nil)
-	if err != nil {
-		return "", err
-	}
-
-	return string(decriptedData), nil
+	return message, nil
 }
 
+// Insert encrypt the message if necessary and save into a file
 func (t *TextManagementService) Insert(text entity.TextManagement) (entity.TextManagement, error) {
+	text.Uuid = generateUuid()
+	fileName := text.Uuid
+
 	if *text.Encryption {
+		fileName = "encrypted_" + text.Uuid
+
 		var err error
 		text.TextData, text.PrivateKey, err = encryptMessage(text.KeySize, text.TextData, text.PrivateKeyPassword)
 		if err != nil {
@@ -67,9 +76,7 @@ func (t *TextManagementService) Insert(text entity.TextManagement) (entity.TextM
 		}
 	}
 
-	text.Uuid = generateUuid()
-
-	err := t.TextManagementRepository.Save(text.Uuid, text.TextData)
+	err := t.TextManagementRepository.Save(fileName, text.TextData)
 	if err != nil {
 		return entity.TextManagement{}, err
 	}
@@ -114,4 +121,29 @@ func encryptMessage(keySize uint64, textData string, privateKeyPassword string) 
 
 func generateUuid() string {
 	return uuid.New().String()
+}
+
+func decryptMessage(privateKeyString string, password string, data []byte) (string, error) {
+	pk := strings.NewReader(privateKeyString)
+	pemBytes, err := ioutil.ReadAll(pk)
+	if err != nil {
+		return "", err
+	}
+	block, _ := pem.Decode(pemBytes)
+	bytePK, err := x509.DecryptPEMBlock(block, []byte(password))
+	if err != nil {
+		return "", err
+	}
+
+	privateKey, err := x509.ParsePKCS1PrivateKey(bytePK)
+	if err != nil {
+		return "", err
+	}
+
+	decriptedData, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, privateKey, data, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return string(decriptedData), nil
 }
