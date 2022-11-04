@@ -3,11 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
+	"zcelero/helper"
 	"zcelero/repository"
-	"zcelero/routes"
 	"zcelero/service"
 
-	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -28,17 +27,9 @@ func main() {
 	textManagementRepository := repository.NewRepository()
 	textManagementService := service.NewService(textManagementRepository)
 
-	router := StartAPI(textManagementService)
+	router := helper.StartAPI(textManagementService)
 	log.Info().Msg("API Started")
 	router.Run()
-}
-
-func StartAPI(textManagementService service.TextManagementServiceInteface) *gin.Engine {
-	gin.SetMode(os.Getenv("GIN_MODE"))
-	router := gin.Default()
-
-	routes.GetRoutes(router, textManagementService)
-	return router
 }
 
 func zerologLogLevel(level string) zerolog.Level {
