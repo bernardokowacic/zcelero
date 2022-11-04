@@ -26,7 +26,7 @@ func Get(textManagementService service.TextManagementServiceInteface) gin.Handle
 		}{}
 		if err := c.ShouldBindJSON(&json); err != nil {
 			log.Error().Msg(err.Error())
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusNotAcceptable, gin.H{"error": err.Error()})
 			return
 		}
 
