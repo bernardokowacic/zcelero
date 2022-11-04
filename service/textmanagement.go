@@ -7,7 +7,9 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"strings"
 	"zcelero/database/entity"
 	"zcelero/repository"
 
@@ -15,7 +17,7 @@ import (
 )
 
 type TextManagementServiceInteface interface {
-	Get()
+	Get(textId, privateKey, password string) (string, error)
 	Insert(text entity.TextManagement) (entity.TextManagement, error)
 }
 
@@ -27,8 +29,35 @@ func NewService(textManagementRepository repository.TextManagementInterface) Tex
 	return &TextManagementService{TextManagementRepository: textManagementRepository}
 }
 
-func (t *TextManagementService) Get() {
+func (t *TextManagementService) Get(textId, privateKeyString, password string) (string, error) {
+	pk := strings.NewReader(privateKeyString)
+	pemBytes, err := ioutil.ReadAll(pk)
+	if err != nil {
+		return "", err
+	}
+	block, _ := pem.Decode(pemBytes)
+	bytePK, err := x509.DecryptPEMBlock(block, []byte(password))
+	if err != nil {
+		return "", err
+	}
 
+	privateKey, err := x509.ParsePKCS1PrivateKey(bytePK)
+	if err != nil {
+		return "", err
+	}
+
+	fileName := fmt.Sprintf("%s.txt", textId)
+	data, err := os.ReadFile(fileName)
+	if err != nil {
+		return "", err
+	}
+
+	decriptedData, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, privateKey, data, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return string(decriptedData), nil
 }
 
 func (t *TextManagementService) Insert(text entity.TextManagement) (entity.TextManagement, error) {
@@ -75,10 +104,11 @@ func encryptMessage(keySize uint64, textData string, privateKeyPassword string) 
 		return "", "", err
 	}
 
+	privateKeyBytes := x509.MarshalPKCS1PrivateKey(privatekey)
 	// Convert it to pem
 	block := &pem.Block{
 		Type:  "RSA PRIVATE KEY",
-		Bytes: ciphertext,
+		Bytes: privateKeyBytes,
 	}
 
 	// Encrypt the pem
