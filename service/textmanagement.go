@@ -8,7 +8,6 @@ import (
 	"encoding/pem"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"strings"
 	"zcelero/entity"
 	"zcelero/repository"
@@ -46,8 +45,7 @@ func (t *TextManagementService) Get(textId, privateKeyString, password string) (
 		return "", err
 	}
 
-	fileName := fmt.Sprintf("%s.txt", textId)
-	data, err := os.ReadFile(fileName)
+	data, err := t.TextManagementRepository.Load(textId)
 	if err != nil {
 		return "", err
 	}
@@ -71,13 +69,7 @@ func (t *TextManagementService) Insert(text entity.TextManagement) (entity.TextM
 
 	text.Uuid = generateUuid()
 
-	fileName := fmt.Sprintf("%s.txt", text.Uuid)
-	file, err := os.Create(fileName)
-	if err != nil {
-		return entity.TextManagement{}, err
-	}
-
-	_, err = file.WriteString(text.TextData)
+	err := t.TextManagementRepository.Save(text.Uuid, text.TextData)
 	if err != nil {
 		return entity.TextManagement{}, err
 	}
