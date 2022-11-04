@@ -7,4 +7,5 @@ type TextManagement struct {
 	KeySize            uint64 `json:"key_size" binding:"oneof=1024 2048 4096" gorm:"type:uint;column:key_size"`
 	Uuid               string `json:"uuid" gorm:"unique;type:string;size:36;column:uuid;not null"`
 	PrivateKeyPassword string `json:"private_key_password" gorm:"type:string;column:private_key_password"`
+	PrivateKey         string `json:"private_key" gorm:"type:string;column:private_key"`
 }
