@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
@@ -11,7 +10,6 @@ import (
 type TextManagementInterface interface {
 	Save(fileName string, content string) error
 	Load(fileName string) ([]byte, error)
-	CheckFileExists(fileName string) bool
 }
 
 type textManagementRepositoryStruct struct {
@@ -25,7 +23,7 @@ func NewRepository() TextManagementInterface {
 func (t *textManagementRepositoryStruct) Save(fileName string, content string) error {
 	log.Debug().Msg("Creating file")
 
-	file, err := os.Create(fmt.Sprintf("storage/%s.txt", fileName))
+	file, err := os.Create(fmt.Sprintf("storage/%s.json", fileName))
 	if err != nil {
 		log.Error().Msg(err.Error())
 		return err
@@ -45,20 +43,11 @@ func (t *textManagementRepositoryStruct) Save(fileName string, content string) e
 // Load reads the file into memory
 func (t *textManagementRepositoryStruct) Load(fileName string) ([]byte, error) {
 	log.Debug().Msg("Reading file")
-	data, err := os.ReadFile(fmt.Sprintf("storage/%s.txt", fileName))
+	data, err := os.ReadFile(fmt.Sprintf("storage/%s.json", fileName))
 	if err != nil {
 		log.Error().Msg(err.Error())
 		return nil, err
 	}
 
 	return data, nil
-}
-
-// CheckFileExists check if the file exists
-func (t *textManagementRepositoryStruct) CheckFileExists(fileName string) bool {
-	if _, err := os.Stat(fmt.Sprintf("storage/%s.txt", fileName)); errors.Is(err, os.ErrNotExist) {
-		return false
-	}
-
-	return true
 }
