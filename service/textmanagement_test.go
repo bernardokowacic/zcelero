@@ -2,7 +2,9 @@ package service_test
 
 import (
 	"errors"
+	"reflect"
 	"testing"
+	"zcelero/entity"
 	mockrespository "zcelero/mocks/repository"
 	"zcelero/repository"
 	"zcelero/service"
@@ -185,6 +187,48 @@ func TestTextManagementService_Get(t *testing.T) {
 			}
 			if got != tt.want {
 				t.Errorf("TextManagementService.Get() = %v, want %v", got, tt.want)
+			}
+
+			if tt.assertBehavior != nil {
+				tt.assertBehavior(t, tt.fields)
+			}
+		})
+	}
+}
+
+func TestTextManagementService_Insert(t *testing.T) {
+	type fields struct {
+		TextManagementRepository repository.TextManagementInterface
+	}
+	type args struct {
+		text entity.TextManagement
+	}
+	tests := []struct {
+		name           string
+		fields         fields
+		args           args
+		mockBehavior   func(f fields, a args)
+		assertBehavior func(t *testing.T, f fields)
+		want           entity.TextManagement
+		wantErr        bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.mockBehavior != nil {
+				tt.mockBehavior(tt.fields, tt.args)
+			}
+
+			service := service.NewService(tt.fields.TextManagementRepository)
+
+			got, err := service.Insert(tt.args.text)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("TextManagementService.Insert() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("TextManagementService.Insert() = %v, want %v", got, tt.want)
 			}
 
 			if tt.assertBehavior != nil {
