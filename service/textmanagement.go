@@ -51,7 +51,7 @@ func (t *TextManagementService) Get(textId, privateKeyString, password string) (
 	fileData := fileContent{}
 	json.Unmarshal(data, &fileData)
 
-	message := string(data)
+	message := string(fileData.Content)
 	if fileData.Encrypted {
 		if privateKeyString == "" {
 			err := errors.New("private key is required to read this file")
