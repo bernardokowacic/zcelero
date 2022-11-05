@@ -55,12 +55,12 @@ func Insert(textManagementService service.TextManagementServiceInteface) gin.Han
 
 		if *json.Encryption && json.PrivateKeyPassword == "" {
 			log.Info().Msg("private_key_password not sent when encryption is required")
-			c.JSON(http.StatusBadRequest, gin.H{"error": "private_key_password is required when encryption is true"})
+			c.JSON(http.StatusNotAcceptable, gin.H{"error": "private_key_password is required when encryption is true"})
 			return
 		}
 		if *json.Encryption && (json.KeySize != 1024 && json.KeySize != 2048 && json.KeySize != 4096) {
 			log.Info().Msg("keysize must be 1024 or 2048 or 4096")
-			c.JSON(http.StatusBadRequest, gin.H{"error": "keysize must be 1024 or 2048 or 4096"})
+			c.JSON(http.StatusNotAcceptable, gin.H{"error": "keysize must be 1024 or 2048 or 4096"})
 			return
 		}
 
