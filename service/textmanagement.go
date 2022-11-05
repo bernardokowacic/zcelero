@@ -9,8 +9,6 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"errors"
-	"io/ioutil"
-	"strings"
 	"zcelero/entity"
 	"zcelero/repository"
 
@@ -167,13 +165,7 @@ func generateUuid() string {
 }
 
 func decryptMessage(privateKeyString string, password string, data []byte) (string, error) {
-	pk := strings.NewReader(privateKeyString)
-	pemBytes, err := ioutil.ReadAll(pk)
-	if err != nil {
-		log.Error().Msg(err.Error())
-		return "", err
-	}
-	block, _ := pem.Decode(pemBytes)
+	block, _ := pem.Decode([]byte(privateKeyString))
 	bytePK, err := x509.DecryptPEMBlock(block, []byte(password))
 	if err != nil {
 		log.Error().Msg(err.Error())
