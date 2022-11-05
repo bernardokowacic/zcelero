@@ -144,13 +144,11 @@ func encryptMessage(keySize uint64, textData string, privateKeyPassword string) 
 	}
 
 	privateKeyBytes := x509.MarshalPKCS1PrivateKey(privatekey)
-	// Convert it to pem
 	block := &pem.Block{
 		Type:  "RSA PRIVATE KEY",
 		Bytes: privateKeyBytes,
 	}
 
-	// Encrypt the pem
 	block, err = x509.EncryptPEMBlock(rand.Reader, block.Type, block.Bytes, []byte(privateKeyPassword), x509.PEMCipherAES256)
 	if err != nil {
 		log.Error().Msg(err.Error())
