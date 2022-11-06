@@ -10,7 +10,7 @@ To run this application you need to have the following tools installed on your m
 * [Docker](https://www.docker.com/)
 * [Docker Compose](https://docs.docker.com/compose/install/)
 
-## Running Posterr
+## Running Zcelero
 Right now the project runs with docker-compose, so to execute the project you must run the command `docker-compose up` in your terminal inside the project folder. It will start the API in port 8080.
 
 The application contains a file called `.env`, there are the environment variables responsible for defining the operating mode of the Gin framework and also for defining the log level that will be displayed in the terminal. By default both are in `debug` mode.
