@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/pem"
+	"os"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
@@ -14,6 +15,9 @@ import (
 type HelperInterface interface {
 	EncryptMessage(keySize uint64, textData string, privateKeyPassword string) ([]byte, string, error)
 	GenerateUuid() string
+	CreateFile(filePath string) (*os.File, error)
+	ReadFile(filePath string) ([]byte, error)
+	WriteFile(file *os.File, content string) (n int, err error)
 }
 
 type helperStruct struct{}
@@ -53,4 +57,16 @@ func (h *helperStruct) EncryptMessage(keySize uint64, textData string, privateKe
 // GenerateUuid generates a new UUID
 func (h *helperStruct) GenerateUuid() string {
 	return uuid.New().String()
+}
+
+func (h *helperStruct) CreateFile(filePath string) (*os.File, error) {
+	return os.Create(filePath)
+}
+
+func (h *helperStruct) ReadFile(filePath string) ([]byte, error) {
+	return os.ReadFile(filePath)
+}
+
+func (h *helperStruct) WriteFile(file *os.File, content string) (n int, err error) {
+	return file.WriteString(content)
 }
