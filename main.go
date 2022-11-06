@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"zcelero/api"
 	"zcelero/helper"
 	"zcelero/repository"
 	"zcelero/service"
@@ -25,9 +26,10 @@ func init() {
 
 func main() {
 	textManagementRepository := repository.NewRepository()
-	textManagementService := service.NewService(textManagementRepository)
+	helper := helper.NewHelper()
+	textManagementService := service.NewService(textManagementRepository, helper)
 
-	router := helper.StartAPI(textManagementService)
+	router := api.Start(textManagementService)
 	log.Info().Msg("API Started")
 	router.Run()
 }

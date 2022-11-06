@@ -1,4 +1,4 @@
-package helper
+package api
 
 import (
 	"os"
@@ -8,8 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// StartAPI initializes Gin API
-func StartAPI(textManagementService service.TextManagementServiceInteface) *gin.Engine {
+// Start initializes Gin API
+func Start(textManagementService service.TextManagementServiceInteface) *gin.Engine {
 	gin.SetMode(os.Getenv("GIN_MODE"))
 	router := gin.Default()
 
