@@ -9,20 +9,6 @@ type TextManagementInterface struct {
 	mock.Mock
 }
 
-// CheckFileExists provides a mock function with given fields: fileName
-func (_m *TextManagementInterface) CheckFileExists(fileName string) bool {
-	ret := _m.Called(fileName)
-
-	var r0 bool
-	if rf, ok := ret.Get(0).(func(string) bool); ok {
-		r0 = rf(fileName)
-	} else {
-		r0 = ret.Get(0).(bool)
-	}
-
-	return r0
-}
-
 // Load provides a mock function with given fields: fileName
 func (_m *TextManagementInterface) Load(fileName string) ([]byte, error) {
 	ret := _m.Called(fileName)
