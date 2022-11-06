@@ -15,4 +15,4 @@
 # vendor/
 
 __debug_bin
-*.json
+storage/*
