@@ -6,3 +6,5 @@ comentar sobre criar mensagens de erro melhores para o usuáario ao invés de us
 
 
 Talk about level logs and gin modes
+
+Comentar sobre o helper criado - Falar que eu parti do princípio que os métodos disponibilizados pela linguagem funcionam como o esperado
