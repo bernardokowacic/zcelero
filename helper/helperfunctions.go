@@ -45,7 +45,7 @@ func (h *helperStruct) EncryptMessage(keySize uint64, textData string, privateKe
 		Bytes: privateKeyBytes,
 	}
 
-	block, err = x509.EncryptPEMBlock(rand.Reader, block.Type, block.Bytes, []byte(privateKeyPassword), x509.PEMCipherAES256)
+	block, err = x509.EncryptPEMBlock(randReader, block.Type, block.Bytes, []byte(privateKeyPassword), x509.PEMCipherAES256)
 	if err != nil {
 		log.Error().Msg(err.Error())
 		return nil, "", err
@@ -59,14 +59,17 @@ func (h *helperStruct) GenerateUuid() string {
 	return uuid.New().String()
 }
 
+// CreateFile creates a file in the desired path with the desired name
 func (h *helperStruct) CreateFile(filePath string) (*os.File, error) {
 	return os.Create(filePath)
 }
 
+// ReadFile reads the desired file
 func (h *helperStruct) ReadFile(filePath string) ([]byte, error) {
 	return os.ReadFile(filePath)
 }
 
+// WriteFile write the content in the file
 func (h *helperStruct) WriteFile(file *os.File, content string) (n int, err error) {
 	return file.WriteString(content)
 }
