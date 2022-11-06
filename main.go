@@ -25,8 +25,8 @@ func init() {
 }
 
 func main() {
-	textManagementRepository := repository.NewRepository()
 	helper := helper.NewHelper()
+	textManagementRepository := repository.NewRepository(helper)
 	textManagementService := service.NewService(textManagementRepository, helper)
 
 	router := api.Start(textManagementService)
