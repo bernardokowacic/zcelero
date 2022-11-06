@@ -1,0 +1,75 @@
+{
+	"info": {
+		"_postman_id": "43c37ce3-de64-44ff-a31c-61d4ec80a431",
+		"name": "zecelero",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6221780"
+	},
+	"item": [
+		{
+			"name": "Save data",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"text_data\": \"aaaaaaaa\",\r\n    \"encryption\": true,\r\n    \"key_size\": 1024,\r\n    \"private_key_password\": \"aaa\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/v1/text-management",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"text-management"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Load data",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"private_key\": \"-----BEGIN RSA PRIVATE KEY-----\\nProc-Type: 4,ENCRYPTED\\nDEK-Info: AES-256-CBC,515e8a17d4324fe704d4ab529af19058\\n\\nni87CX0QNdeUneFW0GGmljAjTyUVRv6K+/cA6WxAyODtxGfDfYqnkAtzTWD+qnbt\\n2aQkTK1++/yGa87cUb4zLVIZzZF+SpQpzLVXgJqb26KLxQwwpajBw6okEGHQ4gao\\nuwtzsqKUaqGB4DqTkxOtoSVlT3lsj7Kj8upFrI+i0PTyFYlaqFoB/14fcpOED6s5\\nBwuQjdzuf5GgWuQEDlCTBSFQCV9L+V3dxvEChV4YYUAkXfjlw0Y892Ubl9wej2Nc\\n3z7N57shl3sC2m4AqLrSQaUDE7oI//bzwhrMUVcLe7aJxZ3Za1kwUhumbgWlEuhq\\neJdW/+rysW19P++7WFoJHQgZqMD9PfHFehzzdWw3uKM/2mQeXHAHlGP/7XTXMhgk\\nbVFCp4jeWSQOEBuNjcpbPHHiEjrnEPaEzH7gLRobDarJmDM/G6XrkyGUZvx28zIs\\nYJiz9fd+LiFmmjO8mGL2KGGgGxPoTLML4FfLx7HWW+TlfJygdZwCKTidvBh/ZTuB\\n0Z0om342YxfGC7xeGfsd2kXCiFVJDdYSC+/SY9FliQ2hxuZpChpOYmwDibitPjZZ\\nv95pB5NB0o1484YbxyaHtk+C5PZTRaOlDZnaoojfwzkZaWHT7csnHmROO9+pBWSZ\\n7d98SB+ALe1t6MYZlaEU6RCsX1L6ayEXeZlAdFLnd3gs4Wz6xuOPYljlwiKJCYgK\\n2yDhJ102LCVCjf+rFObavMsz6ijK4HR5OrincsPvBLvRj3B1SZsM8Gs26aEbqKBi\\n4OfgQsatW1eW0eTVsWui1Z966basFBZcTAlvgf2jq01Hg/0zfOU2j7JqWs/3nPjW\\n-----END RSA PRIVATE KEY-----\\n\",\r\n    \"private_key_password\": \"aaa\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/v1/text-management?text_id=89d25889-cf4e-4492-93aa-78cc79d8dfe1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"text-management"
+					],
+					"query": [
+						{
+							"key": "text_id",
+							"value": "89d25889-cf4e-4492-93aa-78cc79d8dfe1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
