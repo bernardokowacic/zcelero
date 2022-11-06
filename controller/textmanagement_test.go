@@ -8,8 +8,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"zcelero/api"
 	"zcelero/entity"
-	"zcelero/helper"
 	serviceMock "zcelero/mocks/service"
 
 	"github.com/go-playground/assert/v2"
@@ -17,7 +17,7 @@ import (
 
 func TestGetUserRoute(t *testing.T) {
 	service := &serviceMock.TextManagementServiceInteface{}
-	router := helper.StartAPI(service)
+	router := api.Start(service)
 
 	uuid := "154ad8a0-1e42-4cf6-9d7b-e49f71dcc4ec"
 	args := struct {
@@ -40,7 +40,7 @@ func TestGetUserRoute(t *testing.T) {
 
 func TestGetUserRouteWithoutTextID(t *testing.T) {
 	service := &serviceMock.TextManagementServiceInteface{}
-	router := helper.StartAPI(service)
+	router := api.Start(service)
 
 	args := struct {
 		PrivateKey         string `json:"private_key"`
@@ -60,7 +60,7 @@ func TestGetUserRouteWithoutTextID(t *testing.T) {
 
 func TestGetUserRouteWithServiceError(t *testing.T) {
 	service := &serviceMock.TextManagementServiceInteface{}
-	router := helper.StartAPI(service)
+	router := api.Start(service)
 
 	uuid := "154ad8a0-1e42-4cf6-9d7b-e49f71dcc4ec"
 	args := struct {
@@ -83,7 +83,7 @@ func TestGetUserRouteWithServiceError(t *testing.T) {
 
 func TestGetUserRouteBidingError(t *testing.T) {
 	service := &serviceMock.TextManagementServiceInteface{}
-	router := helper.StartAPI(service)
+	router := api.Start(service)
 
 	uuid := "154ad8a0-1e42-4cf6-9d7b-e49f71dcc4ec"
 	args := struct {
@@ -104,7 +104,7 @@ func TestGetUserRouteBidingError(t *testing.T) {
 
 func TestPostUserRouteWithoutEncryptation(t *testing.T) {
 	service := &serviceMock.TextManagementServiceInteface{}
-	router := helper.StartAPI(service)
+	router := api.Start(service)
 
 	encryptation := false
 	args := entity.TextManagement{
@@ -130,7 +130,7 @@ func TestPostUserRouteWithoutEncryptation(t *testing.T) {
 
 func TestPostUserRouteWithEncryptation(t *testing.T) {
 	service := &serviceMock.TextManagementServiceInteface{}
-	router := helper.StartAPI(service)
+	router := api.Start(service)
 
 	encryptation := true
 	args := entity.TextManagement{
@@ -161,7 +161,7 @@ func TestPostUserRouteWithEncryptation(t *testing.T) {
 
 func TestPostUserRouteWithBindingError(t *testing.T) {
 	service := &serviceMock.TextManagementServiceInteface{}
-	router := helper.StartAPI(service)
+	router := api.Start(service)
 
 	encryptation := true
 	args := entity.TextManagement{
@@ -180,7 +180,7 @@ func TestPostUserRouteWithBindingError(t *testing.T) {
 
 func TestPostUserRouteWithoutPassword(t *testing.T) {
 	service := &serviceMock.TextManagementServiceInteface{}
-	router := helper.StartAPI(service)
+	router := api.Start(service)
 
 	encryptation := true
 	args := entity.TextManagement{
@@ -199,7 +199,7 @@ func TestPostUserRouteWithoutPassword(t *testing.T) {
 
 func TestPostUserRouteWithWrongKeySize(t *testing.T) {
 	service := &serviceMock.TextManagementServiceInteface{}
-	router := helper.StartAPI(service)
+	router := api.Start(service)
 
 	encryptation := true
 	args := entity.TextManagement{
@@ -219,7 +219,7 @@ func TestPostUserRouteWithWrongKeySize(t *testing.T) {
 
 func TestPostUserRouteWithInsertError(t *testing.T) {
 	service := &serviceMock.TextManagementServiceInteface{}
-	router := helper.StartAPI(service)
+	router := api.Start(service)
 
 	encryptation := true
 	args := entity.TextManagement{
