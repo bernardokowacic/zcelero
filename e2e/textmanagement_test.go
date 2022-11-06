@@ -50,9 +50,11 @@ func TestEndToEndEncrypted(t *testing.T) {
 	}
 	getBody, _ := json.Marshal(getArgs)
 
-	req, _ = http.NewRequest(http.MethodGet, "/v1/text-management?text_id="+postResponse.Uuid, bytes.NewReader(getBody))
+	req, _ = http.NewRequest(http.MethodGet, "/v1/text-management?id="+postResponse.Uuid, bytes.NewReader(getBody))
 	res = httptest.NewRecorder()
 	router.ServeHTTP(res, req)
+
+	os.RemoveAll("storage")
 
 	assert.Equal(t, http.StatusOK, res.Code)
 	assert.Equal(t, `{"text":"encrypted text data"}`, res.Body.String())
@@ -89,10 +91,12 @@ func TestEndToEndNonEncrypted(t *testing.T) {
 	}
 	getBody, _ := json.Marshal(getArgs)
 
-	req, _ = http.NewRequest(http.MethodGet, "/v1/text-management?text_id="+postResponse.Uuid, bytes.NewReader(getBody))
+	req, _ = http.NewRequest(http.MethodGet, "/v1/text-management?id="+postResponse.Uuid, bytes.NewReader(getBody))
 	res = httptest.NewRecorder()
 	router.ServeHTTP(res, req)
 	fmt.Println(res.Body)
+
+	os.RemoveAll("storage")
 
 	assert.Equal(t, http.StatusOK, res.Code)
 	assert.Equal(t, `{"text":"text data"}`, res.Body.String())
