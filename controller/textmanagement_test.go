@@ -32,7 +32,7 @@ func TestGetUserRoute(t *testing.T) {
 	service.On("Get", uuid, args.PrivateKey, args.PrivateKeyPassword).Return("message", nil)
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest(http.MethodGet, "/v1/text-management?text_id="+uuid, bytes.NewReader(body))
+	req, _ := http.NewRequest(http.MethodGet, "/v1/text-management?id="+uuid, bytes.NewReader(body))
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -75,7 +75,7 @@ func TestGetUserRouteWithServiceError(t *testing.T) {
 	service.On("Get", uuid, args.PrivateKey, args.PrivateKeyPassword).Return("", errors.New("some error"))
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest(http.MethodGet, "/v1/text-management?text_id="+uuid, bytes.NewReader(body))
+	req, _ := http.NewRequest(http.MethodGet, "/v1/text-management?id="+uuid, bytes.NewReader(body))
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -96,7 +96,7 @@ func TestGetUserRouteBidingError(t *testing.T) {
 	body, _ := json.Marshal(args)
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest(http.MethodGet, "/v1/text-management?text_id="+uuid, bytes.NewReader(body))
+	req, _ := http.NewRequest(http.MethodGet, "/v1/text-management?id="+uuid, bytes.NewReader(body))
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusNotAcceptable, w.Code)

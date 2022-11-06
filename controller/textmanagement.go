@@ -13,10 +13,10 @@ func Get(textManagementService service.TextManagementServiceInteface) gin.Handle
 	return func(c *gin.Context) {
 		log.Debug().Msg("end-point GET /v1/text-management requested")
 
-		textId, exists := c.GetQuery("text_id")
+		textId, exists := c.GetQuery("id")
 		if !exists {
-			log.Info().Msg("text_id not sent")
-			c.JSON(http.StatusNotAcceptable, gin.H{"message": "text_id param is required"})
+			log.Info().Msg("id not sent")
+			c.JSON(http.StatusNotAcceptable, gin.H{"message": "id param is required"})
 			return
 		}
 

@@ -52,7 +52,7 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/v1/text-management?text_id=89d25889-cf4e-4492-93aa-78cc79d8dfe1",
+					"raw": "localhost:8080/v1/text-management?id=89d25889-cf4e-4492-93aa-78cc79d8dfe1",
 					"host": [
 						"localhost"
 					],
@@ -63,7 +63,7 @@
 					],
 					"query": [
 						{
-							"key": "text_id",
+							"key": "id",
 							"value": "89d25889-cf4e-4492-93aa-78cc79d8dfe1"
 						}
 					]
