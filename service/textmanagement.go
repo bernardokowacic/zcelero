@@ -10,9 +10,9 @@ import (
 	"encoding/pem"
 	"errors"
 	"zcelero/entity"
+	"zcelero/helper"
 	"zcelero/repository"
 
-	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 )
 
@@ -28,10 +28,14 @@ type TextManagementServiceInteface interface {
 
 type TextManagementService struct {
 	TextManagementRepository repository.TextManagementInterface
+	Helper                   helper.HelperInterface
 }
 
-func NewService(textManagementRepository repository.TextManagementInterface) TextManagementServiceInteface {
-	return &TextManagementService{TextManagementRepository: textManagementRepository}
+func NewService(textManagementRepository repository.TextManagementInterface, helper helper.HelperInterface) TextManagementServiceInteface {
+	return &TextManagementService{
+		TextManagementRepository: textManagementRepository,
+		Helper:                   helper,
+	}
 }
 
 // Get load the file content and decrypt it if necessary
@@ -84,14 +88,14 @@ func (t *TextManagementService) Get(textId, privateKeyString, password string) (
 func (t *TextManagementService) Insert(text entity.TextManagement) (entity.TextManagement, error) {
 	log.Debug().Msg("Creating new file with message")
 
-	text.Uuid = generateUuid()
+	text.Uuid = t.Helper.GenerateUuid()
 
 	if *text.Encryption {
 		log.Debug().Msg("Encrypting message")
 
 		var err error
 		var encodedMessage []byte
-		encodedMessage, text.PrivateKey, err = encryptMessage(text.KeySize, text.TextData, text.PrivateKeyPassword)
+		encodedMessage, text.PrivateKey, err = t.Helper.EncryptMessage(text.KeySize, text.TextData, text.PrivateKeyPassword)
 		if err != nil {
 			log.Error().Msg(err.Error())
 			return entity.TextManagement{}, err
@@ -121,45 +125,6 @@ func (t *TextManagementService) Insert(text entity.TextManagement) (entity.TextM
 	log.Debug().Msg("Message saved successfully")
 
 	return text, nil
-}
-
-func encryptMessage(keySize uint64, textData string, privateKeyPassword string) ([]byte, string, error) {
-	randReader := rand.Reader
-	privatekey, err := rsa.GenerateKey(randReader, int(keySize))
-	if err != nil {
-		log.Error().Msg(err.Error())
-		return nil, "", err
-	}
-
-	publicKey := &privatekey.PublicKey
-	if err != nil {
-		log.Error().Msg(err.Error())
-		return nil, "", err
-	}
-
-	ciphertext, err := rsa.EncryptOAEP(sha256.New(), randReader, publicKey, []byte(textData), nil)
-	if err != nil {
-		log.Error().Msg(err.Error())
-		return nil, "", err
-	}
-
-	privateKeyBytes := x509.MarshalPKCS1PrivateKey(privatekey)
-	block := &pem.Block{
-		Type:  "RSA PRIVATE KEY",
-		Bytes: privateKeyBytes,
-	}
-
-	block, err = x509.EncryptPEMBlock(rand.Reader, block.Type, block.Bytes, []byte(privateKeyPassword), x509.PEMCipherAES256)
-	if err != nil {
-		log.Error().Msg(err.Error())
-		return nil, "", err
-	}
-
-	return ciphertext, string(pem.EncodeToMemory(block)), nil
-}
-
-func generateUuid() string {
-	return uuid.New().String()
 }
 
 func decryptMessage(privateKeyString string, password string, data []byte) (string, error) {
