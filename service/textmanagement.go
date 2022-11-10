@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"errors"
+	"io"
 	"zcelero/entity"
 	"zcelero/helper"
 	"zcelero/repository"
@@ -72,7 +73,13 @@ func (t *TextManagementService) Get(textId, privateKeyString, password string) (
 
 		log.Debug().Msg("Decrypting message")
 
-		message, err = decryptMessage(privateKeyString, password, content)
+		privateKey, err := decryptPrivateKey(privateKeyString, password)
+		if err != nil {
+			log.Error().Msg(err.Error())
+			return "", err
+		}
+
+		message, err = decryptMessage(privateKey, content)
 		if err != nil {
 			log.Error().Msg(err.Error())
 			return "", err
@@ -95,7 +102,14 @@ func (t *TextManagementService) Insert(text entity.TextManagement) (entity.TextM
 
 		var err error
 		var encodedMessage []byte
-		encodedMessage, text.PrivateKey, err = t.Helper.EncryptMessage(text.KeySize, text.TextData, text.PrivateKeyPassword)
+		randReader := rand.Reader
+		publicKey, privateKey, err := generatePairKey(randReader, text.KeySize, text.PrivateKeyPassword)
+		if err != nil {
+			log.Error().Msg(err.Error())
+			return entity.TextManagement{}, err
+		}
+
+		encodedMessage, err = encryptMessage(randReader, publicKey, text.TextData)
 		if err != nil {
 			log.Error().Msg(err.Error())
 			return entity.TextManagement{}, err
@@ -103,6 +117,7 @@ func (t *TextManagementService) Insert(text entity.TextManagement) (entity.TextM
 
 		log.Debug().Msg("Encoding into base64")
 
+		text.PrivateKey = privateKey
 		text.TextData = base64.StdEncoding.EncodeToString(encodedMessage)
 
 		log.Debug().Msg("Encryption finished")
@@ -127,20 +142,53 @@ func (t *TextManagementService) Insert(text entity.TextManagement) (entity.TextM
 	return text, nil
 }
 
-func decryptMessage(privateKeyString string, password string, data []byte) (string, error) {
+func generatePairKey(randReader io.Reader, keySize uint64, privateKeyPassword string) (*rsa.PublicKey, string, error) {
+	privatekey, _ := rsa.GenerateKey(randReader, int(keySize))
+	publicKey := &privatekey.PublicKey
+
+	privateKeyBytes := x509.MarshalPKCS1PrivateKey(privatekey)
+	block := &pem.Block{
+		Type:  "RSA PRIVATE KEY",
+		Bytes: privateKeyBytes,
+	}
+
+	block, err := x509.EncryptPEMBlock(randReader, block.Type, block.Bytes, []byte(privateKeyPassword), x509.PEMCipherAES256)
+	if err != nil {
+		log.Error().Msg(err.Error())
+		return nil, "", err
+	}
+
+	return publicKey, string(pem.EncodeToMemory(block)), nil
+}
+
+func encryptMessage(randReader io.Reader, publicKey *rsa.PublicKey, textData string) ([]byte, error) {
+	ciphertext, err := rsa.EncryptOAEP(sha256.New(), randReader, publicKey, []byte(textData), nil)
+	if err != nil {
+		log.Error().Msg(err.Error())
+		return nil, err
+	}
+
+	return ciphertext, nil
+}
+
+func decryptPrivateKey(privateKeyString string, password string) (*rsa.PrivateKey, error) {
 	block, _ := pem.Decode([]byte(privateKeyString))
 	bytePK, err := x509.DecryptPEMBlock(block, []byte(password))
 	if err != nil {
 		log.Error().Msg(err.Error())
-		return "", err
+		return nil, err
 	}
 
 	privateKey, err := x509.ParsePKCS1PrivateKey(bytePK)
 	if err != nil {
 		log.Error().Msg(err.Error())
-		return "", err
+		return nil, err
 	}
 
+	return privateKey, nil
+}
+
+func decryptMessage(privateKey *rsa.PrivateKey, data []byte) (string, error) {
 	decriptedData, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, privateKey, data, nil)
 	if err != nil {
 		log.Error().Msg(err.Error())

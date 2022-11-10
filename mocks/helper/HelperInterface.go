@@ -36,36 +36,6 @@ func (_m *HelperInterface) CreateFile(filePath string) (*os.File, error) {
 	return r0, r1
 }
 
-// EncryptMessage provides a mock function with given fields: keySize, textData, privateKeyPassword
-func (_m *HelperInterface) EncryptMessage(keySize uint64, textData string, privateKeyPassword string) ([]byte, string, error) {
-	ret := _m.Called(keySize, textData, privateKeyPassword)
-
-	var r0 []byte
-	if rf, ok := ret.Get(0).(func(uint64, string, string) []byte); ok {
-		r0 = rf(keySize, textData, privateKeyPassword)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]byte)
-		}
-	}
-
-	var r1 string
-	if rf, ok := ret.Get(1).(func(uint64, string, string) string); ok {
-		r1 = rf(keySize, textData, privateKeyPassword)
-	} else {
-		r1 = ret.Get(1).(string)
-	}
-
-	var r2 error
-	if rf, ok := ret.Get(2).(func(uint64, string, string) error); ok {
-		r2 = rf(keySize, textData, privateKeyPassword)
-	} else {
-		r2 = ret.Error(2)
-	}
-
-	return r0, r1, r2
-}
-
 // GenerateUuid provides a mock function with given fields:
 func (_m *HelperInterface) GenerateUuid() string {
 	ret := _m.Called()
