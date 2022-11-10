@@ -47,7 +47,6 @@ func (t *TextManagementService) Get(textId, privateKeyString, password string) (
 
 	data, err := t.TextManagementRepository.Load(textId)
 	if err != nil {
-		log.Error().Msg(err.Error())
 		return "", err
 	}
 
@@ -133,7 +132,6 @@ func (t *TextManagementService) Insert(text entity.TextManagement) (entity.TextM
 
 	err := t.TextManagementRepository.Save(text.Uuid, string(b))
 	if err != nil {
-		log.Error().Msg(err.Error())
 		return entity.TextManagement{}, err
 	}
 

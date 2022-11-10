@@ -66,7 +66,6 @@ func Insert(textManagementService service.TextManagementServiceInteface) gin.Han
 
 		response, err := textManagementService.Insert(json)
 		if err != nil {
-			log.Error().Msg(err.Error())
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
